@@ -4,7 +4,6 @@ CS415 Project 2
 Dr. Gurman Gill, Sonoma State Univrsity
 This program represents very long (up to 1000 digits) integers as
 lists and multiplies and exponentiates them
-
 '''
 
 def convertIntToList(integer):
