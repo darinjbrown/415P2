@@ -6,6 +6,7 @@ This program represents very long (up to 1000 digits) integers as
 lists and multiplies and exponentiates them
 
 '''
+import copy
 
 
 def convertIntToList(integer):
@@ -28,6 +29,7 @@ def preProcessLists(listOfInts1, listOfInts2):
         for i in range(1, tmp):
             listOfInts1.insert(0, 0)
 
+    return listOfInts1, listOfInts2
 
     #karatsuba(listOfInts1, listOfInts2)
 
@@ -39,49 +41,61 @@ def splitList(listofInts):
 
 
 
-def addLists(l1First, l2First, l1Second, l2Second):
-    z0 = []
-    z1 = []
-
-    carry1 = 0
-    carry2 = 0
-
-    for i in range(len(l2First), 1):
-        if l1First[i] + l2First[i] + carry1 > 9:
-            z0.insert(0, 0)
-            carry1 = 1
-        else:
-            z0.insert(l1First[i] + l2First[i] + carry1)
-            carry1 = 0
-
-        if l1Second[i] + l2Second[i] + carry2 > 9:
-            z1.insert(0, 0)
-            carry2 = 1
-        else:
-            z1.insert(l1Second[i] + l2Second[i] + carry2)
-            carry2 = 0
-
-    return z0, z1
-
-
-
-def subLists(z0, z1):
+def addLists(list1, list2):
     tmp = []
+    carry = 0
 
-    for i in range(len(z0), 1):
-        if z0[i] - z1[i] < 0:
-            z0[i-1] = z0[i-1] - 1
-            tmp.insert(int(str(1) + str(z1[i])) - z1[i])
+    i = len(list1)-1
+    j = len(list2)-1
+
+    while i > -1 and j > -1:
+        if ((list1[i] + list2[j] + carry) > 9):
+            tmp.insert(0, 0)
+            carry = 1
         else:
-            tmp.insert(z0[i] - z1[i])
+            n = list1[i] + list2[j] + carry
+            tmp.insert(0, n)
+            carry = 0
+        i = i-1
+        j = j-1
+
+    n = list1[i]+carry
+    tmp.insert(0, n)
+
+    return tmp
+
+
+
+def subLists(list1, list2):
+    tmp = []
+    carry = 0
+
+    i = len(list1)-1
+    j = len(list2)-1
+
+    while i > -1 and j > -1:
+        if ((list1[i] - list2[j]) < 0):
+            tmp.insert(0, ((10+list1[i])-list2[j]))
+            carry = 1
+        else:
+            tmp.insert(0, (list1[i] - list2[j] - carry))
+        i = i-1
+        j = j-1
 
     return tmp
 
 
 
 def karatsuba(listOfInts1, listOfInts2):
-    if (len(listOfInts1) == 1 or len(listOfInts2) == 1):
-        return listOfInts1[0]*listOfInts2[0]
+    if (len(listOfInts1) == 1 and len(listOfInts2) == 1):
+        tmp = []
+        tint1 = "".join(map(str, listOfInts1))
+        tint2 = "".join(map(str, listOfInts2))
+        tint1 = int(tint1)*int(tint2)
+        tint1 = str(tint1)
+        for i in tint1:
+            tmp.append(i)
+        return tmp
     else:
         num = len(listOfInts1)/2
 
@@ -89,28 +103,27 @@ def karatsuba(listOfInts1, listOfInts2):
         l2First, l2Second = splitList(listOfInts2)
 
         c2 = karatsuba(l1First, l2First)
-        c0 = karatsuba(l2First, l2Second)
+        c0 = karatsuba(l1Second, l2Second)
 
-        z0, z1 = addLists(l1First, l2First, l1Second, l2Second)
-        z2 = subLists(z0, z1)
+        z0 = addLists(l1First, l2First)
+        z1 = addLists(l1Second, l2Second)
 
-        c1 = subLists(karatsuba(z0, z1), z2)
+        z3 = karatsuba(z0, z1)
+        z2 = addLists(c2, c0)
 
-    shift = 2*num
-    for i in range(1, shift):
-        c2.append(0)
-    for x in range(1, num):
-        c1.append(0)
+        c1 = subLists(z3, z2)
 
-    c3 = addLists(c2, c1)
-    c3 = addLists(c3, c0)
+        shift = 2*num
+        for i in range(1, shift):
+            c2.append(0)
+        for x in range(1, num):
+            c1.append(0)
 
-    return c3
+        c3 = addLists(c2, c1)
 
+        c3 = addLists(c3, c0)
 
-
-
-
+        return c3
 
 
 
@@ -134,7 +147,7 @@ def main():
             num2 = input("Enter second number: ")
             list1 = convertIntToList(num1)
             list2 = convertIntToList(num2)
-            preProcessLists(list1, list2)
+            list1, list2 = preProcessLists(list1, list2)
             result = karatsuba(list1, list2)
             print(result)
 
