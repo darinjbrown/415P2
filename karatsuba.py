@@ -7,6 +7,13 @@ lists and multiplies and exponentiates them
 
 '''
 
+def listToString(list:list):
+    #convert to string for printing purposes (print answer as 4532 instead of [4,5,3,2])
+    result = str("")
+    for element in list:
+        result = str(result) + str(element)
+    return result
+
 def firstListGreaterValue(list1, list2):
     #input 2 lists
     #after running function return greater then lesser
@@ -213,11 +220,14 @@ def main():
               "2 = Exponentiate\n"
               "3 = quit\n")
 
-        userChoice = input("Enter your choice: ")
+        userChoice = int(input("Enter your choice: "))
 
-        while userChoice < 1 or userChoice > 3:
+        while int(userChoice) < 1 or int(userChoice) > 3:
             print("Please enter a number between 1 and 3!")
             userChoice = input("Enter your choice: ")
+
+        if userChoice == 3:
+            return
 
         if userChoice == 1:
             print("Two numbers will be multiplied using karatsuba")
@@ -226,7 +236,25 @@ def main():
             list1 = convertIntToList(num1)
             list2 = convertIntToList(num2)
             result = karatsuba(list1, list2)
-            print(result)
+            print(listToString(result))
+
+        if userChoice == 2:
+            base = int(input("Enter number to exponentiate: "))
+            exponent = int(input("Enter the exponent as an integer: "))
+            baseList = convertIntToList(base)
+            result = baseList
+            if exponent == 1:
+                result = baseList
+            elif exponent == 0:
+                result = 1
+            else:
+                result = baseList
+                for i in range (1, exponent):
+                    result = karatsuba(result, baseList)
+            print (str(result))
+
+
+
 
 
 
