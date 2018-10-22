@@ -8,7 +8,21 @@ lists and multiplies and exponentiates them
 '''
 
 
-def exponentiate(list1, list2)
+def exponentiate(num, exp):
+    numList = convertIntToList(num)
+    strtList = numList[:]
+
+    while exp > 1:
+        if exp % 2 == 0:
+            numList = karatsuba(numList, numList)
+            exp = exp / 2
+        else:
+            numList = karatsuba(numList, numList)
+            numList = karatsuba(numList, strtList)
+            exp = (exp - 1) / 2
+
+    return numList
+
 
 def listToString(list):
     #convert to string for printing purposes (print answer as 4532 instead of [4,5,3,2])
@@ -154,17 +168,17 @@ def karatsuba(listOfInts1, listOfInts2):
         c2 = karatsuba(l1First, l2First)
         c0 = karatsuba(l1Second, l2Second)
 
-        fHalf = addLists(l1First, l2First)
-        sHalf = addLists(l1Second, l2Second)
+        fHalf = addLists(l1First, l1Second)
+        sHalf = addLists(l2First, l2Second)
 
         karat3 = karatsuba(fHalf, sHalf)
 
-        new1, new2 = firstListGreaterValue(karat3, c2)
-        #new1, new2 = karat3, c2
+        #new1, new2 = firstListGreaterValue(karat3, c2)
+        new1, new2 = karat3, c2
         c1 = subLists(new1, new2)
 
-        new3, new4 = firstListGreaterValue(c1, c0)
-        #new3, new4 = c1, c0
+        #new3, new4 = firstListGreaterValue(c1, c0)
+        new3, new4 = c1, c0
         c1 = subLists(new3, new4)
 
         shift = nm + nm
@@ -184,7 +198,6 @@ def karatsuba(listOfInts1, listOfInts2):
         result = addLists(c3, c0)
         result = cutLeadingZeroes(result)
         return result
-
 
 
 def main():
@@ -214,23 +227,13 @@ def main():
             print(listToString(result))
 
         if userChoice == 2:
+
             base = int(input("Enter number to exponentiate: "))
             exponent = int(input("Enter the exponent as an integer: "))
-            baseList = convertIntToList(base)
-            result = baseList
-            if exponent == 1:
-                result = baseList
-            elif exponent == 0:
-                result = 1
-            else:
-                result = baseList
-                for i in range (1, exponent):
-                    result = karatsuba(result, baseList)
+
+            result = exponentiate(base, exponent)
+
             print (listToString(result))
-
-
-
-
 
 
 main()
