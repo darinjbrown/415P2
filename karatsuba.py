@@ -57,42 +57,45 @@ def convertIntToList(integer):
 def preProcessLists(listOfInts1, listOfInts2):
     #make the larger of the two lists even then make the
     #smaller list of equal size if
-    if len(listOfInts1) > len(listOfInts2):
-        if (len(listOfInts1) % 2) != 0:
-            listOfInts1.insert(0, 0)
-        tmp = len(listOfInts1) - len(listOfInts2)
+    l1 = listOfInts1[:]
+    l2 = listOfInts2[:]
+    if len(l1) > len(l2):
+        if (len(l1) % 2) != 0:
+            l1.insert(0, 0)
+        tmp = len(l1) - len(l2)
         while tmp > 0:
-            listOfInts2.insert(0, 0)
+            l2.insert(0, 0)
             tmp = tmp - 1
 
-    elif len(listOfInts1) < len(listOfInts2):
-        if (len(listOfInts2) % 2) != 0:
-            listOfInts2.insert(0, 0)
-        tmp = len(listOfInts2) - len(listOfInts1)
+    elif len(l1) < len(l2):
+        if (len(l2) % 2) != 0:
+            l2.insert(0, 0)
+        tmp = len(l2) - len(l1)
         while tmp > 0:
-            listOfInts1.insert(0, 0)
+            l1.insert(0, 0)
             tmp = tmp - 1
 
     else:
-        if (len(listOfInts1) % 2) != 0:
-            listOfInts1.insert(0, 0)
-            listOfInts2.insert(0, 0)
+        if (len(l1) % 2) != 0:
+            l1.insert(0, 0)
+            l2.insert(0, 0)
 
-    return listOfInts1, listOfInts2
+    return l1, l2
 
 
 
 def cutLeadingZeroes(list):
     zChecker = 0
     i = 0
-    while i < len(list)-2 and zChecker == 0:
-        if int(list[i]) == 0:
-            list.pop(0)
+    tmp = list[:]
+    while i < len(tmp)-2 and zChecker == 0:
+        if int(tmp[i]) == 0:
+            tmp.pop(0)
         else:
             zChecker = 1
         i = i+1
 
-    return list
+    return tmp
 
 
 #splits a list of even size in half and returns the two lists
@@ -127,8 +130,8 @@ def addLists(list1, list2):
     if carry > 0:
         tmp.insert(0, carry)
 
-    if len(tmp) > 1:
-        tmp = cutLeadingZeroes(tmp)
+    #if len(tmp) > 1:
+    #    tmp = cutLeadingZeroes(tmp)
     return tmp
 
 
@@ -142,7 +145,7 @@ def subLists(list1, list2):
 
     i = (len(list1)-1)
 
-    while i > 0:
+    while i > -1:
         if (int(list1[i]) - int(list2[i])) < 0:
             tmp.insert(0, ((10+int(list1[i])) - carry - int(list2[i])))
             carry = 1
@@ -151,10 +154,8 @@ def subLists(list1, list2):
             carry = 0
         i = i-1
 
-    tmp.insert(0, int(list1[i]) - carry - int(list2[i]))
-
-    if len(tmp) > 1:
-        tmp = cutLeadingZeroes(tmp)
+    #if len(tmp) > 1:
+    #    tmp = cutLeadingZeroes(tmp)
 
     return tmp
 
@@ -163,6 +164,7 @@ def subLists(list1, list2):
 def karatsuba(listOfInts1, listOfInts2):
 
     if len(listOfInts1) == 1 and len(listOfInts2) == 1:
+
         tmp = []
         tint1 = "".join(map(str, listOfInts1))
         tint2 = "".join(map(str, listOfInts2))
@@ -171,6 +173,7 @@ def karatsuba(listOfInts1, listOfInts2):
         for i in tint1:
             tmp.append(int(i))
         return tmp
+
 
     else:
         listOfInts1, listOfInts2 = preProcessLists(listOfInts1, listOfInts2)
@@ -184,10 +187,7 @@ def karatsuba(listOfInts1, listOfInts2):
 
         c0 = karatsuba(l1Second, l2Second)
 
-        fHalf = addLists(l1First, l1Second)
-        sHalf = addLists(l2First, l2Second)
-
-        karat3 = karatsuba(fHalf, sHalf)
+        karat3 = karatsuba(addLists(l1First, l1Second), addLists(l2First, l2Second))
 
         new1, new2 = karat3, c2
         c1 = subLists(new1, new2)
@@ -209,6 +209,8 @@ def karatsuba(listOfInts1, listOfInts2):
 
         c3 = addLists(c2, c1)
         result = addLists(c3, c0)
+        if len(result) > 1:
+            result = cutLeadingZeroes(result)
         return result
 
 
@@ -237,6 +239,7 @@ def main():
             list2 = convertIntToList(num2)
             result = karatsuba(list1, list2)
             result = cutLeadingZeroes(result)
+
             print(listToString(result))
 
         if userChoice == 2:
