@@ -7,6 +7,39 @@ lists and multiplies and exponentiates them
 
 '''
 
+def firstListGreaterValue(list1, list2):
+    #input 2 lists
+    #after running function return greater then lesser
+
+    #determine number of leading 0's in each list
+    leadingList1 = 0
+    leadingList2 = 0
+    for i in len(list1):
+        if list1[i] == '0':
+            leadingList1 += 1
+        else:
+            break
+    for i in len(list2):
+        if list2[i] == '0':
+            leadingList2 += 1
+        else:
+            break
+
+    # return the longer list
+    if (len(list1) - leadingList1) > (len(list2) - leadingList2):
+        return list1, list2
+    if (len(list2) - leadingList2) > (len(list1) - leadingList1):
+        return list2, list1
+
+    # lengths are equal, so check each digit to find the greater
+    for i in (len(list1)):
+        if int(list1[i]) > int(list2[i]):
+            return list1, list2
+
+    # list2 is greater, so swap
+    return list2, list1
+
+
 
 def convertIntToList(integer):
     list = [int(i) for i in str(integer)]
