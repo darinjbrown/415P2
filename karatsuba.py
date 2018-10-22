@@ -8,9 +8,9 @@ lists and multiplies and exponentiates them
 '''
 
 
-def exponentiate(list1:list, list2:list)
+def exponentiate(list1, list2)
 
-def listToString(list:list):
+def listToString(list):
     #convert to string for printing purposes (print answer as 4532 instead of [4,5,3,2])
     result = str("")
     if len(list) <= 1:
@@ -18,16 +18,6 @@ def listToString(list:list):
     for element in list:
         result = str(result) + str(element)
     return result
-
-
-
-    # lengths are equal, so check each digit to find the greater
-    for i in (len(list1)):
-        if int(list1[i]) > int(list2[i]):
-            return list1, list2
-
-    # list2 is greater, so swap
-    return list2, list1
 
 
 
