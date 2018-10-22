@@ -16,23 +16,23 @@ def convertIntToList(integer):
 def preProcessLists(listOfInts1, listOfInts2):
     #make the larger of the two lists even then make the
     #smaller list of equal size
-    if (len(listOfInts1) > len(listOfInts2)):
-        if (len(listOfInts1) % 2) != 0:
+    if len(listOfInts1) > len(listOfInts2):
+        if (len(listOfInts1) % 2) != 0 and len(listOfInts1) > 1:
             listOfInts1.insert(0, 0)
-        tmp = len(listOfInts1) - len(listOfInts2) + 1
+        tmp = len(listOfInts1) - len(listOfInts2)
         while tmp > 0:
-            listOfInts2.insert(1, 0)
+            listOfInts2.insert(0, 0)
             tmp = tmp - 1
 
-    elif(len(listOfInts1) < len(listOfInts2) ):
+    elif len(listOfInts1) < len(listOfInts2) and len(listOfInts2) > 1:
         if (len(listOfInts2) % 2) != 0:
             listOfInts2.insert(0, 0)
-        tmp = len(listOfInts2) - len(listOfInts1) + 1
+        tmp = len(listOfInts2) - len(listOfInts1)
         while tmp > 0:
             listOfInts1.insert(0, 0)
             tmp = tmp - 1
     else:
-        if (len(listOfInts1) % 2) != 0:
+        if (len(listOfInts1) % 2) != 0 and len(listOfInts1) > 1:
             listOfInts1.insert(0, 0)
             listOfInts2.insert(0, 0)
 
@@ -53,8 +53,8 @@ def addLists(list1, list2):
     list1, list2 = preProcessLists(list1, list2)
     i = (len(list1)-1)
 
-    while i > 0:
-        if ((int(list1[i]) + int(list2[i]) + carry) > 9):
+    while i > -1:
+        if (int(list1[i]) + int(list2[i]) + carry) > 9:
             sumElem = int(list1[i]) + int(list2[i]) + carry
             sumElem = sumElem % 10
             tmp.insert(0, sumElem)
@@ -64,7 +64,7 @@ def addLists(list1, list2):
             tmp.insert(0, n)
             carry = 0
         i = i-1
-
+    '''
     if ((int(list1[i]) + int(list2[i]) + carry) > 9):
         sumElem = int(list1[i]) + int(list2[i]) + carry
         sumElem = sumElem % 10
@@ -74,6 +74,7 @@ def addLists(list1, list2):
         n = int(list1[i]) + int(list2[i]) + carry
         tmp.insert(0, n)
         carry = 0
+    '''
     if carry > 0:
         tmp.insert(0, carry)
 
@@ -85,38 +86,36 @@ def subLists(list1, list2):
     tmp = []
     carry = 0
     list1, list2 = preProcessLists(list1, list2)
-    i = (len(list1)-1)
+    i = (len(list1))
 
     while i > -1:
         if (int(list1[i]) - int(list2[i])) < 0:
-            tmp.insert(0, ((10+int(list1[i]))-int(list2[i]) - carry))
+            tmp.insert(0, ((10+int(list1[i])) - int(list2[i]) - carry))
             carry = 1
         else:
             tmp.insert(0, (int(list1[i]) - int(list2[i]) - carry))
             carry = 0
         i = i-1
 
-
-
     return tmp
 
 
 
 def karatsuba(listOfInts1, listOfInts2):
-    if len(listOfInts1) == 1 or len(listOfInts2) == 1:
+
+    if len(listOfInts1) == 1 and len(listOfInts2) == 1:
         tmp = []
         tint1 = "".join(map(str, listOfInts1))
         tint2 = "".join(map(str, listOfInts2))
         tint1 = int(tint1)*int(tint2)
         tint1 = str(tint1)
         for i in tint1:
-            tmp.append(i)
+            tmp.append(int(i))
         return tmp
 
     else:
-
         listOfInts1, listOfInts2 = preProcessLists(listOfInts1, listOfInts2)
-        num = len(listOfInts1)/2
+        nm = len(listOfInts1)/2
 
         l1First, l1Second = splitList(listOfInts1)
         l2First, l2Second = splitList(listOfInts2)
@@ -133,12 +132,16 @@ def karatsuba(listOfInts1, listOfInts2):
 
         c1 = subLists(z3, z2)
 
-        shift = num + num
+        shift = nm + nm
 
-        for i in range(1, shift):
+        i = 0
+        while i < shift:
             c2.append(0)
-        for x in range(1, num):
+            i = i+1
+        j = 0
+        while j < nm:
             c1.append(0)
+            j = j+1
 
         c3 = addLists(c2, c1)
 
