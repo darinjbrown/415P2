@@ -6,7 +6,6 @@ This program represents very long (up to 1000 digits) integers as
 lists and multiplies and exponentiates them
 
 '''
-import copy
 
 
 def convertIntToList(integer):
@@ -15,28 +14,41 @@ def convertIntToList(integer):
 
 def preProcessLists(listOfInts1, listOfInts2):
     #make the larger of the two lists even then make the
-    #smaller list of equal size
+    #smaller list of equal size if
     if len(listOfInts1) > len(listOfInts2):
-        if (len(listOfInts1) % 2) != 0 and len(listOfInts1) > 1:
+        if (len(listOfInts1) % 2) != 0:
             listOfInts1.insert(0, 0)
         tmp = len(listOfInts1) - len(listOfInts2)
         while tmp > 0:
             listOfInts2.insert(0, 0)
             tmp = tmp - 1
 
-    elif len(listOfInts1) < len(listOfInts2) and len(listOfInts2) > 1:
+    elif len(listOfInts1) < len(listOfInts2):
         if (len(listOfInts2) % 2) != 0:
             listOfInts2.insert(0, 0)
         tmp = len(listOfInts2) - len(listOfInts1)
         while tmp > 0:
             listOfInts1.insert(0, 0)
             tmp = tmp - 1
+
     else:
-        if (len(listOfInts1) % 2) != 0 and len(listOfInts1) > 1:
+        if (len(listOfInts1) % 2) != 0:
             listOfInts1.insert(0, 0)
             listOfInts2.insert(0, 0)
 
     return listOfInts1, listOfInts2
+
+
+def cutLeadingZeroes(list):
+    zChecker = 0
+    i = 0
+    while i < len(list)-2 and zChecker == 0:
+        if int(list[i]) == 0:
+            list.pop(0)
+        else:
+            zChecker = 1
+
+    return list
 
 
 #splits a list of even size in half and returns the two lists
@@ -50,34 +62,28 @@ def splitList(listofInts):
 def addLists(list1, list2):
     tmp = []
     carry = 0
-    list1, list2 = preProcessLists(list1, list2)
+
+    if (len(list1) > 1) or (len(list2) > 1):
+        list1, list2 = preProcessLists(list1, list2)
+
     i = (len(list1)-1)
 
     while i > -1:
         if (int(list1[i]) + int(list2[i]) + carry) > 9:
-            sumElem = int(list1[i]) + int(list2[i]) + carry
-            sumElem = sumElem % 10
-            tmp.insert(0, sumElem)
+            n = int(list1[i]) + int(list2[i]) + carry
+            n = n % 10
+            tmp.insert(0, n)
             carry = 1
         else:
             n = int(list1[i]) + int(list2[i]) + carry
             tmp.insert(0, n)
             carry = 0
         i = i-1
-    '''
-    if ((int(list1[i]) + int(list2[i]) + carry) > 9):
-        sumElem = int(list1[i]) + int(list2[i]) + carry
-        sumElem = sumElem % 10
-        tmp.insert(0, sumElem)
-        carry = 1
-    else:
-        n = int(list1[i]) + int(list2[i]) + carry
-        tmp.insert(0, n)
-        carry = 0
-    '''
+
     if carry > 0:
         tmp.insert(0, carry)
 
+    tmp = cutLeadingZeroes(tmp)
     return tmp
 
 
@@ -85,18 +91,31 @@ def addLists(list1, list2):
 def subLists(list1, list2):
     tmp = []
     carry = 0
-    list1, list2 = preProcessLists(list1, list2)
-    i = (len(list1))
 
-    while i > -1:
+    if (len(list1) > 1) or (len(list2) > 1):
+        list1, list2 = preProcessLists(list1, list2)
+
+    i = (len(list1)-1)
+
+    while i > 0:
         if (int(list1[i]) - int(list2[i])) < 0:
-            tmp.insert(0, ((10+int(list1[i])) - int(list2[i]) - carry))
+            tmp.insert(0, ((10+int(list1[i])) - carry - int(list2[i])))
             carry = 1
         else:
-            tmp.insert(0, (int(list1[i]) - int(list2[i]) - carry))
+            tmp.insert(0, (int(list1[i]) - carry - int(list2[i])))
             carry = 0
         i = i-1
 
+    tmp.insert(0, int(list1[i]) - carry - int(list2[i]))
+
+    if any(neg < 0 for neg in tmp):
+        i = 0
+        while i < len(tmp)-1:
+            if tmp[i] < 0:
+                tmp[i] = int(tmp[i])*-1
+            i = i+1
+
+    tmp = cutLeadingZeroes(tmp)
     return tmp
 
 
@@ -115,6 +134,7 @@ def karatsuba(listOfInts1, listOfInts2):
 
     else:
         listOfInts1, listOfInts2 = preProcessLists(listOfInts1, listOfInts2)
+
         nm = len(listOfInts1)/2
 
         l1First, l1Second = splitList(listOfInts1)
@@ -126,11 +146,11 @@ def karatsuba(listOfInts1, listOfInts2):
         fHalf = addLists(l1First, l2First)
         sHalf = addLists(l1Second, l2Second)
 
-        z3 = karatsuba(fHalf, sHalf)
+        karat3 = karatsuba(fHalf, sHalf)
 
-        z2 = addLists(c2, c0)
+        c1 = subLists(karat3, c2)
 
-        c1 = subLists(z3, z2)
+        c1 = subLists(c1, c0)
 
         shift = nm + nm
 
@@ -138,6 +158,7 @@ def karatsuba(listOfInts1, listOfInts2):
         while i < shift:
             c2.append(0)
             i = i+1
+
         j = 0
         while j < nm:
             c1.append(0)
