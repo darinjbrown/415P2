@@ -9,19 +9,34 @@ lists and multiplies and exponentiates them
 
 
 def exponentiate(num, exp):
-    numList = convertIntToList(num)
-    strtList = numList[:]
-
+    strtList = num[:]
     while exp > 1:
+        strtList = cutLeadingZeroes(strtList)
+        num = cutLeadingZeroes(num)
+        numcpy = num[:]
         if exp % 2 == 0:
-            numList = karatsuba(numList, numList)
+            num = karatsuba(num, numcpy)
             exp = exp / 2
         else:
-            numList = karatsuba(numList, numList)
-            numList = karatsuba(numList, strtList)
+            num = karatsuba(num, numcpy)
+            num = karatsuba(num, strtList)
             exp = (exp - 1) / 2
+    return num
 
-    return numList
+def firstListGreaterValue(list1, list2):
+    #input 2 lists
+    #after running function return greater then lesser
+    #determine number of leading 0's in each list
+
+    if len(list1) > len(list2):
+        return list1, list2
+    elif len(list1) < len(list2):
+        return list2, list1
+    else:
+        if list1[0] > list2[0]:
+            return list1, list2
+        else:
+            return list2, list1
 
 
 def listToString(list):
@@ -166,6 +181,7 @@ def karatsuba(listOfInts1, listOfInts2):
         l2First, l2Second = splitList(listOfInts2)
 
         c2 = karatsuba(l1First, l2First)
+
         c0 = karatsuba(l1Second, l2Second)
 
         fHalf = addLists(l1First, l1Second)
@@ -173,15 +189,13 @@ def karatsuba(listOfInts1, listOfInts2):
 
         karat3 = karatsuba(fHalf, sHalf)
 
-        #new1, new2 = firstListGreaterValue(karat3, c2)
         new1, new2 = karat3, c2
         c1 = subLists(new1, new2)
 
-        #new3, new4 = firstListGreaterValue(c1, c0)
         new3, new4 = c1, c0
         c1 = subLists(new3, new4)
 
-        shift = nm + nm
+        shift = (nm + nm)
 
         i = 0
         while i < shift:
@@ -194,9 +208,7 @@ def karatsuba(listOfInts1, listOfInts2):
             j = j+1
 
         c3 = addLists(c2, c1)
-
         result = addLists(c3, c0)
-        result = cutLeadingZeroes(result)
         return result
 
 
@@ -224,14 +236,15 @@ def main():
             list1 = convertIntToList(num1)
             list2 = convertIntToList(num2)
             result = karatsuba(list1, list2)
+            result = cutLeadingZeroes(result)
             print(listToString(result))
 
         if userChoice == 2:
 
-            base = int(input("Enter number to exponentiate: "))
-            exponent = int(input("Enter the exponent as an integer: "))
-
-            result = exponentiate(base, exponent)
+            base = (input("Enter number to exponentiate: "))
+            exponent = (input("Enter the exponent as an integer: "))
+            num = convertIntToList(base)
+            result = exponentiate(num, exponent)
 
             print (listToString(result))
 
