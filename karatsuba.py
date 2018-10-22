@@ -7,6 +7,9 @@ lists and multiplies and exponentiates them
 
 '''
 
+
+def exponentiate(list1:list, list2:list)
+
 def listToString(list:list):
     #convert to string for printing purposes (print answer as 4532 instead of [4,5,3,2])
     result = str("")
