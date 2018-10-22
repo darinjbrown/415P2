@@ -10,6 +10,8 @@ lists and multiplies and exponentiates them
 def listToString(list:list):
     #convert to string for printing purposes (print answer as 4532 instead of [4,5,3,2])
     result = str("")
+    if len(list) <= 1:
+        return str(list[0])
     for element in list:
         result = str(result) + str(element)
     return result
@@ -292,7 +294,7 @@ def main():
                 result = baseList
                 for i in range (1, exponent):
                     result = karatsuba(result, baseList)
-            print (str(result))
+            print (listToString(result))
 
 
 
