@@ -7,43 +7,24 @@ lists and multiplies and exponentiates them
 
 '''
 
-def firstListGreaterValue(list1, list2):
-    #input 2 lists
-    #after running function return greater then lesser
 
-    #determine number of leading 0's in each list
-    leadingList1 = 0
-    leadingList2 = 0
-    for i in len(list1):
-        if list1[i] == '0':
-            leadingList1 += 1
-        else:
-            break
-    for i in len(list2):
-        if list2[i] == '0':
-            leadingList2 += 1
-        else:
-            break
 
-    # return the longer list
-    if (len(list1) - leadingList1) > (len(list2) - leadingList2):
-        return list1, list2
-    if (len(list2) - leadingList2) > (len(list1) - leadingList1):
-        return list2, list1
-
-    # lengths are equal, so check each digit to find the greater
-    for i in (len(list1)):
-        if int(list1[i]) > int(list2[i]):
-            return list1, list2
-
-    # list2 is greater, so swap
-    return list2, list1
+def listToString(list):
+    #convert to string for printing purposes (print answer as 4532 instead of [4,5,3,2])
+    result = str("")
+    if len(list) <= 1:
+        return str(list[0])
+    for element in list:
+        result = str(result) + str(element)
+    return result
 
 
 
 def convertIntToList(integer):
     list = [int(i) for i in str(integer)]
     return list
+
+
 
 def preProcessLists(listOfInts1, listOfInts2):
     #make the larger of the two lists even then make the
@@ -73,45 +54,6 @@ def preProcessLists(listOfInts1, listOfInts2):
 
 
 
-
-def firstListGreaterValue(list1, list2):
-    #input 2 lists
-    #after running function
-
-    #determine number of leading 0's in each list
-    leadingList1 = 0
-    leadingList2 = 0
-    i = 0
-    while i < len(list1)-1:
-        if list1[i] == '0':
-            leadingList1 = leadingList1 + 1
-        else:
-            break
-    j = 0
-    while j < len(list2)-1:
-        if list2[i] == '0':
-            leadingList2 = leadingList2 + 1
-        else:
-            break
-
-    # return the longer list
-    if (len(list1) - leadingList1) > (len(list2) - leadingList2):
-        return list1, list2
-    if (len(list2) - leadingList2) > (len(list1) - leadingList1):
-        return list2, list1
-
-    # lengths are equal, so check each digit to find the greater
-    i = 0
-    while i < len(list1)-1:
-        if int(list1[i]) > int(list2[i]):
-            return list1, list2
-
-    # list2 is greater, so swap
-    return list2, list1
-
-
-
-
 def cutLeadingZeroes(list):
     zChecker = 0
     i = 0
@@ -123,6 +65,8 @@ def cutLeadingZeroes(list):
         i = i+1
 
     return list
+
+
 
 
 #splits a list of even size in half and returns the two lists
@@ -204,6 +148,7 @@ def karatsuba(listOfInts1, listOfInts2):
 
     else:
         listOfInts1, listOfInts2 = preProcessLists(listOfInts1, listOfInts2)
+        #listOfInts1, listOfInts2 = firstListGreaterValue(listOfInts1, listOfInts2)
 
         nm = len(listOfInts1)/2
 
@@ -213,18 +158,19 @@ def karatsuba(listOfInts1, listOfInts2):
         c2 = karatsuba(l1First, l2First)
         c0 = karatsuba(l1Second, l2Second)
 
-        fHalf = addLists(l1First, l2First)
-        sHalf = addLists(l1Second, l2Second)
+        fHalf = addLists(l1First, l1Second)
+        sHalf = addLists(l2First, l2Second)
 
         karat3 = karatsuba(fHalf, sHalf)
 
-        new1, new2 = firstListGreaterValue(karat3, c2)
-        #new1, new2 = karat3, c2
+        new1, new2 = karat3, c2
+
         c1 = subLists(new1, new2)
 
-        new3, new4 = firstListGreaterValue(c1, c0)
-        #new3, new4 = c1, c0
+        new3, new4 = c1, c0
         c1 = subLists(new3, new4)
+        c1 = cutLeadingZeroes(c1)
+
 
         shift = nm + nm
 
@@ -241,7 +187,7 @@ def karatsuba(listOfInts1, listOfInts2):
         c3 = addLists(c2, c1)
 
         result = addLists(c3, c0)
-
+        result = cutLeadingZeroes(result)
         return result
 
 
@@ -261,14 +207,14 @@ def main():
             userChoice = input("Enter your choice: ")
 
         if userChoice == 1:
-            print("Two numbers will be multiplied using karatsuba")
+            print("Two numbers will be multiplied using karatsuba\n")
+
             num1 = input("Enter first number: ")
             num2 = input("Enter second number: ")
             list1 = convertIntToList(num1)
             list2 = convertIntToList(num2)
             result = karatsuba(list1, list2)
-            print(result)
-
-
+            print(listToString(result))
+            print("\n")
 
 main()
