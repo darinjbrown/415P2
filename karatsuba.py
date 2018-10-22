@@ -79,6 +79,46 @@ def preProcessLists(listOfInts1, listOfInts2):
     return listOfInts1, listOfInts2
 
 
+
+
+def firstListGreaterValue(list1, list2):
+    #input 2 lists
+    #after running function
+
+    #determine number of leading 0's in each list
+    leadingList1 = 0
+    leadingList2 = 0
+    i = 0
+    while i < len(list1)-1:
+        if list1[i] == '0':
+            leadingList1 = leadingList1 + 1
+        else:
+            break
+    j = 0
+    while j < len(list2)-1:
+        if list2[i] == '0':
+            leadingList2 = leadingList2 + 1
+        else:
+            break
+
+    # return the longer list
+    if (len(list1) - leadingList1) > (len(list2) - leadingList2):
+        return list1, list2
+    if (len(list2) - leadingList2) > (len(list1) - leadingList1):
+        return list2, list1
+
+    # lengths are equal, so check each digit to find the greater
+    i = 0
+    while i < len(list1)-1:
+        if int(list1[i]) > int(list2[i]):
+            return list1, list2
+
+    # list2 is greater, so swap
+    return list2, list1
+
+
+
+
 def cutLeadingZeroes(list):
     zChecker = 0
     i = 0
@@ -87,6 +127,7 @@ def cutLeadingZeroes(list):
             list.pop(0)
         else:
             zChecker = 1
+        i = i+1
 
     return list
 
@@ -123,7 +164,8 @@ def addLists(list1, list2):
     if carry > 0:
         tmp.insert(0, carry)
 
-    tmp = cutLeadingZeroes(tmp)
+    if len(tmp) > 1:
+        tmp = cutLeadingZeroes(tmp)
     return tmp
 
 
@@ -148,14 +190,9 @@ def subLists(list1, list2):
 
     tmp.insert(0, int(list1[i]) - carry - int(list2[i]))
 
-    if any(neg < 0 for neg in tmp):
-        i = 0
-        while i < len(tmp)-1:
-            if tmp[i] < 0:
-                tmp[i] = int(tmp[i])*-1
-            i = i+1
+    if len(tmp) > 1:
+        tmp = cutLeadingZeroes(tmp)
 
-    tmp = cutLeadingZeroes(tmp)
     return tmp
 
 
@@ -188,9 +225,13 @@ def karatsuba(listOfInts1, listOfInts2):
 
         karat3 = karatsuba(fHalf, sHalf)
 
-        c1 = subLists(karat3, c2)
+        new1, new2 = firstListGreaterValue(karat3, c2)
+        #new1, new2 = karat3, c2
+        c1 = subLists(new1, new2)
 
-        c1 = subLists(c1, c0)
+        new3, new4 = firstListGreaterValue(c1, c0)
+        #new3, new4 = c1, c0
+        c1 = subLists(new3, new4)
 
         shift = nm + nm
 
