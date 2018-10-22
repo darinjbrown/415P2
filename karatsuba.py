@@ -8,8 +8,9 @@ lists and multiplies and exponentiates them
 '''
 
 
+def exponentiate(list1:list, list2:list)
 
-def listToString(list):
+def listToString(list:list):
     #convert to string for printing purposes (print answer as 4532 instead of [4,5,3,2])
     result = str("")
     if len(list) <= 1:
@@ -20,11 +21,19 @@ def listToString(list):
 
 
 
+    # lengths are equal, so check each digit to find the greater
+    for i in (len(list1)):
+        if int(list1[i]) > int(list2[i]):
+            return list1, list2
+
+    # list2 is greater, so swap
+    return list2, list1
+
+
+
 def convertIntToList(integer):
     list = [int(i) for i in str(integer)]
     return list
-
-
 
 def preProcessLists(listOfInts1, listOfInts2):
     #make the larger of the two lists even then make the
@@ -65,8 +74,6 @@ def cutLeadingZeroes(list):
         i = i+1
 
     return list
-
-
 
 
 #splits a list of even size in half and returns the two lists
@@ -148,7 +155,6 @@ def karatsuba(listOfInts1, listOfInts2):
 
     else:
         listOfInts1, listOfInts2 = preProcessLists(listOfInts1, listOfInts2)
-        #listOfInts1, listOfInts2 = firstListGreaterValue(listOfInts1, listOfInts2)
 
         nm = len(listOfInts1)/2
 
@@ -158,19 +164,18 @@ def karatsuba(listOfInts1, listOfInts2):
         c2 = karatsuba(l1First, l2First)
         c0 = karatsuba(l1Second, l2Second)
 
-        fHalf = addLists(l1First, l1Second)
-        sHalf = addLists(l2First, l2Second)
+        fHalf = addLists(l1First, l2First)
+        sHalf = addLists(l1Second, l2Second)
 
         karat3 = karatsuba(fHalf, sHalf)
 
-        new1, new2 = karat3, c2
-
+        new1, new2 = firstListGreaterValue(karat3, c2)
+        #new1, new2 = karat3, c2
         c1 = subLists(new1, new2)
 
-        new3, new4 = c1, c0
+        new3, new4 = firstListGreaterValue(c1, c0)
+        #new3, new4 = c1, c0
         c1 = subLists(new3, new4)
-        c1 = cutLeadingZeroes(c1)
-
 
         shift = nm + nm
 
@@ -200,21 +205,42 @@ def main():
               "2 = Exponentiate\n"
               "3 = quit\n")
 
-        userChoice = input("Enter your choice: ")
+        userChoice = int(input("Enter your choice: "))
 
-        while userChoice < 1 or userChoice > 3:
+        while int(userChoice) < 1 or int(userChoice) > 3:
             print("Please enter a number between 1 and 3!")
             userChoice = input("Enter your choice: ")
 
-        if userChoice == 1:
-            print("Two numbers will be multiplied using karatsuba\n")
+        if userChoice == 3:
+            return
 
+        if userChoice == 1:
+            print("Two numbers will be multiplied using karatsuba")
             num1 = input("Enter first number: ")
             num2 = input("Enter second number: ")
             list1 = convertIntToList(num1)
             list2 = convertIntToList(num2)
             result = karatsuba(list1, list2)
             print(listToString(result))
-            print("\n")
+
+        if userChoice == 2:
+            base = int(input("Enter number to exponentiate: "))
+            exponent = int(input("Enter the exponent as an integer: "))
+            baseList = convertIntToList(base)
+            result = baseList
+            if exponent == 1:
+                result = baseList
+            elif exponent == 0:
+                result = 1
+            else:
+                result = baseList
+                for i in range (1, exponent):
+                    result = karatsuba(result, baseList)
+            print (listToString(result))
+
+
+
+
+
 
 main()
