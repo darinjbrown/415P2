@@ -11,7 +11,7 @@ lists and multiplies and exponentiates them
 def exponentiate(num, exp):
 
     strtList = num[:]
-    
+    exp = int(exp)
     if len(strtList) > 1:
         strtList = cutLeadingZeroes(strtList)
     while exp > 1:
@@ -39,7 +39,7 @@ def firstListGreaterValue(list1, list2):
     elif len(list1) < len(list2):
         return list2, list1
     else:
-        if list1[0] > list2[0]:
+        if int(list1[0]) > int(list2[0]):
             return list1, list2
         else:
             return list2, list1
@@ -57,8 +57,8 @@ def listToString(list):
 
 
 def convertIntToList(integer):
-    list = [int(i) for i in str(integer)]
-    return list
+    list1 = list(str(integer))
+    return list1
 
 def preProcessLists(listOfInts1, listOfInts2):
     #make the larger of the two lists even then make the
@@ -199,21 +199,34 @@ def karatsuba(listOfInts1, listOfInts2):
 
         i = 0
         while i < shift:
-            c2.append(0)
+            c2.append('0')
             i = i+1
 
         j = 0
         while j < nm:
-            c1.append(0)
+            c1.append('0')
             j = j+1
 
         c3 = addLists(c2, c1)
         result = addLists(c3, c0)
 
         if len(result) > 1:
-            result = cutLeadingZeroes(result)
+            result = removeLeadingZeroes(result)
 
         return result
+
+
+def removeLeadingZeroes(list1:list):
+    i = int(0)
+
+    for i in (list1):
+        if list1[0] != 0 and len(list1) > 0:
+            return list1
+        else:
+            del(list1[0])
+        #while list1[0] == '0':
+        #del(list1,[i])
+    return list1
 
 
 def main():
@@ -244,7 +257,7 @@ def main():
 
         if userChoice == 2:
             base = (input("Enter number to exponentiate: "))
-            exponent = (input("Enter the exponent as an integer: "))
+            exponent = int((input("Enter the exponent as an integer: ")))
             num = convertIntToList(base)
             result = exponentiate(num, exponent)
 
