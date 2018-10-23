@@ -1,7 +1,7 @@
 '''
 Darin Brown and Skyler Penna
 CS415 Project 2
-Dr. Gurman Gill, Sonoma State Univrsity
+Dr. Gurman Gill, Sonoma State University
 This program represents very long (up to 1000 digits) integers as
 lists and multiplies and exponentiates them
 
@@ -9,8 +9,11 @@ lists and multiplies and exponentiates them
 
 
 def exponentiate(num, exp):
+
     strtList = num[:]
-    strtList = cutLeadingZeroes(strtList)
+    
+    if len(strtList) > 1:
+        strtList = cutLeadingZeroes(strtList)
     while exp > 1:
         num = cutLeadingZeroes(num)
         if exp % 2 == 0:
@@ -21,7 +24,10 @@ def exponentiate(num, exp):
             num = karatsuba(num, strtList)
             exp = (exp - 1) / 2
 
+    if len(num) > 1:
+            num = cutLeadingZeroes(num)
     return num
+
 
 def firstListGreaterValue(list1, list2):
     #input 2 lists
@@ -85,23 +91,24 @@ def preProcessLists(listOfInts1, listOfInts2):
 
 
 def cutLeadingZeroes(list):
-    zChecker = 0
-    i = 0
-    tmp = list[:]
-    while i < len(tmp)-2 and zChecker == 0:
-        if int(tmp[i]) == 0:
-            tmp.pop(0)
+    i = int(0)
+    for i in (list):
+        if list[0] != 0:
+            return list
         else:
-            zChecker = 1
-        i = i+1
+            del(list[0])
+        #while list1[0] == '0':
+        #del(list1,[i])
 
-    return tmp
+    return list
 
 
 #splits a list of even size in half and returns the two lists
 def splitList(listofInts):
     half = len(listofInts)//2
-    return listofInts[:half], listofInts[half:]
+    first = listofInts[:half]
+    second = listofInts[half:]
+    return first, second
 
 
 
@@ -129,9 +136,6 @@ def addLists(list1, list2):
 
     if carry > 0:
         tmp.insert(0, carry)
-
-    #if len(tmp) > 1:
-    #    tmp = cutLeadingZeroes(tmp)
     return tmp
 
 
@@ -154,9 +158,6 @@ def subLists(list1, list2):
             carry = 0
         i = i-1
 
-    #if len(tmp) > 1:
-    #    tmp = cutLeadingZeroes(tmp)
-
     return tmp
 
 
@@ -164,14 +165,13 @@ def subLists(list1, list2):
 def karatsuba(listOfInts1, listOfInts2):
 
     if len(listOfInts1) == 1 and len(listOfInts2) == 1:
-
-        tmp = []
+        
         tint1 = "".join(map(str, listOfInts1))
         tint2 = "".join(map(str, listOfInts2))
         tint1 = int(tint1)*int(tint2)
-        tint1 = str(tint1)
-        for i in tint1:
-            tmp.append(int(i))
+
+        tmp = convertIntToList(tint1)
+
         return tmp
 
 
@@ -209,8 +209,10 @@ def karatsuba(listOfInts1, listOfInts2):
 
         c3 = addLists(c2, c1)
         result = addLists(c3, c0)
+
         if len(result) > 1:
             result = cutLeadingZeroes(result)
+
         return result
 
 
@@ -238,12 +240,9 @@ def main():
             list1 = convertIntToList(num1)
             list2 = convertIntToList(num2)
             result = karatsuba(list1, list2)
-            result = cutLeadingZeroes(result)
-
             print(listToString(result))
 
         if userChoice == 2:
-
             base = (input("Enter number to exponentiate: "))
             exponent = (input("Enter the exponent as an integer: "))
             num = convertIntToList(base)
