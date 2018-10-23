@@ -6,14 +6,50 @@ This program represents very long (up to 1000 digits) integers as
 lists and multiplies and exponentiates them
 
 '''
+def minusLists(list1:list, list2:list):
+    #make sure subtracting smaller from larger
+    list1, list2 = firstListGreaterValue(list1,list2)
+
+    #create empty list to store result
+    list3 = []
+
+    #length of each string
+    l1 = len(list1)
+    l2 = len(list2)
+
+    #reverse both strings
+    list1 = list1[::-1]
+    list2 = list2[::-1]
+
+    #variable for carrying when borrowing
+    carry = 0
+    #school mathematics compute difference of current digits
+    for i in range(l2):
+        sub = (int(list1[i]) - (int(list2[i])-carry))
+
+        #if sub < 0 need to perform borrow/carry
+        if sub < 0:
+            sub = sub + 10
+            carry = 1
+        else:
+            carry = 0
+        subL = convertIntToList(sub)
+        list3.extend(subL)
+
+    #reverse string
+    list3 = list3[::-1]
+
+    return list3
+
 
 
 def exponentiate(num, exp):
-    strtList = num[:]
+    num = list(num)
+    strtList = num
     while exp > 1:
-        strtList = cutLeadingZeroes(strtList)
-        num = cutLeadingZeroes(num)
-        numcpy = num[:]
+        strtList = removeLeadingZeroes(strtList)
+        num = removeLeadingZeroes(num)
+        numcpy = num
         if exp % 2 == 0:
             num = karatsuba(num, numcpy)
             exp = exp / 2
@@ -42,7 +78,7 @@ def firstListGreaterValue(list1, list2):
 def listToString(list):
     #convert to string for printing purposes (print answer as 4532 instead of [4,5,3,2])
     result = str("")
-    if len(list) <= 1:
+    if len(list) == 1:
         return str(list[0])
     for element in list:
         result = str(result) + str(element)
@@ -81,6 +117,20 @@ def preProcessLists(listOfInts1, listOfInts2):
             l2.insert(0, 0)
 
     return l1, l2
+
+
+def removeLeadingZeroes(list1:list):
+    i = int(0)
+    for i in (list1):
+        if list1[0] != 0:
+            return list1
+        else:
+            del(list1[0])
+        #while list1[0] == '0':
+        #del(list1,[i])
+
+    return list1
+
 
 
 
@@ -190,10 +240,10 @@ def karatsuba(listOfInts1, listOfInts2):
         karat3 = karatsuba(addLists(l1First, l1Second), addLists(l2First, l2Second))
 
         new1, new2 = karat3, c2
-        c1 = subLists(new1, new2)
+        c1 = minusLists(new1, new2)
 
         new3, new4 = c1, c0
-        c1 = subLists(new3, new4)
+        c1 = minusLists(new3, new4)
 
         shift = (nm + nm)
 
@@ -210,7 +260,7 @@ def karatsuba(listOfInts1, listOfInts2):
         c3 = addLists(c2, c1)
         result = addLists(c3, c0)
         if len(result) > 1:
-            result = cutLeadingZeroes(result)
+            result = removeLeadingZeroes(result)
         return result
 
 
@@ -245,11 +295,11 @@ def main():
         if userChoice == 2:
 
             base = (input("Enter number to exponentiate: "))
-            exponent = (input("Enter the exponent as an integer: "))
+            exponent = int((input("Enter the exponent as an integer: ")))
             num = convertIntToList(base)
             result = exponentiate(num, exponent)
 
-            print (listToString(result))
+            print (listToString(removeLeadingZeroes(result)))
 
 
 main()
