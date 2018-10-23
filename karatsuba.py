@@ -12,15 +12,15 @@ def exponentiate(num, exp):
     strtList = num[:]
     strtList = cutLeadingZeroes(strtList)
     while exp > 1:
+        num = cutLeadingZeroes(num)
         if exp % 2 == 0:
             num = karatsuba(num, num)
-            num = cutLeadingZeroes(num)
             exp = exp / 2
         else:
             num = karatsuba(num, num)
             num = karatsuba(num, strtList)
-            num = cutLeadingZeroes(num)
             exp = (exp - 1) / 2
+
     return num
 
 def firstListGreaterValue(list1, list2):
