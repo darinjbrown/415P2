@@ -10,16 +10,16 @@ lists and multiplies and exponentiates them
 
 def exponentiate(num, exp):
     strtList = num[:]
+    strtList = cutLeadingZeroes(strtList)
     while exp > 1:
-        strtList = cutLeadingZeroes(strtList)
-        num = cutLeadingZeroes(num)
-        numcpy = num[:]
         if exp % 2 == 0:
-            num = karatsuba(num, numcpy)
+            num = karatsuba(num, num)
+            num = cutLeadingZeroes(num)
             exp = exp / 2
         else:
-            num = karatsuba(num, numcpy)
+            num = karatsuba(num, num)
             num = karatsuba(num, strtList)
+            num = cutLeadingZeroes(num)
             exp = (exp - 1) / 2
     return num
 
