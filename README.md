@@ -5,7 +5,7 @@ Using arrays / lists for long int multiplication or exponentiation
 
 
 Instructions:
-Run karatsuba.py
+Run karatsuba.py  using PYTHON 2.7!  REPEAT:  USE PYTHON 2.7!
 
 Select choice 1 to multiply two numbers.  You can input very long integers.
 Select choice 2 to exponentiate.  Then enter the base, then the power you want to raise it to.

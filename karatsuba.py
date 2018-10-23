@@ -11,6 +11,7 @@ lists and multiplies and exponentiates them
 def exponentiate(num, exp):
     baseNum = convertIntToList(num)
     tmp = baseNum[:]
+    exp = int(exp)
     # tmp = cutLeadingZeroes(tmp)
     # if len(strtList) > 1:
     # strtList = cutLeadingZeroes(strtList)
